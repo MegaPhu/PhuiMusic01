@@ -2,15 +2,15 @@
   "string": [
     {
       "name": "module_desc",
-      "value": "module description"
+      "value": "PhuiSic music player"
     },
     {
       "name": "EntryAbility_desc",
-      "value": "description"
+      "value": "PhuiSic"
     },
     {
       "name": "EntryAbility_label",
-      "value": "label"
+      "value": "PhuiSic"
     }
   ]
 }

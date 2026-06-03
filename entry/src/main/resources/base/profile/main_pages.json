@@ -1,5 +1,16 @@
 {
   "src": [
-    "pages/Index"
+    "pages/Index",
+    "pages/auth/Splash",
+    "pages/auth/Login",
+    "pages/auth/SignUp",
+    "pages/auth/ResetPassword",
+    "pages/main/Home",
+    "pages/main/Player",
+    "pages/main/ArtistSongs",
+    "pages/main/Search",
+    "pages/main/Library",
+    "pages/main/Premium",
+    "pages/main/Profile"
   ]
 }
