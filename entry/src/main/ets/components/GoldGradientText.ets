@@ -18,7 +18,7 @@ export struct GoldGradientText {
       .textOverflow({ overflow: TextOverflow.Ellipsis })
       .shadow({
         radius: this.glow ? 10 : 2,
-        color: this.glow ? MeowColors.glowGold : 'rgba(0,0,0,0.28)',
+        color: this.glow ? MeowColors.glowGold : MeowColors.shadowText,
         offsetX: 0,
         offsetY: this.glow ? 0 : 1
       })

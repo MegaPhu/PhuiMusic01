@@ -13,14 +13,14 @@ export struct GlassCard {
     .width('100%')
     .padding(this.paddingValue)
     .borderRadius(this.radiusValue)
-    .backgroundColor('rgba(12,13,31,0.66)')
-    .border({ width: 1, color: 'rgba(255,255,255,0.12)' })
+    .backgroundColor(MeowColors.glassPanel)
+    .border({ width: 1, color: MeowColors.borderStrong })
     .backdropBlur(MeowEffects.backdropBlur)
     .shadow({
-      radius: 26,
-      color: 'rgba(4,5,20,0.42)',
+      radius: 22,
+      color: MeowColors.shadowPanel,
       offsetX: 0,
-      offsetY: 12
+      offsetY: 8
     })
   }
 }

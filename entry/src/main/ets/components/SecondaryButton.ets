@@ -16,11 +16,11 @@ export struct SecondaryButton {
       .fontWeight(FontWeight.Bold)
       .fontColor(this.isEnabled ? MeowColors.textPrimary : MeowColors.textTertiary)
       .borderRadius(MeowRadius.control)
-      .backgroundColor(this.ghost ? 'rgba(255,255,255,0.035)' : 'rgba(28,28,58,0.86)')
-      .border({ width: 1, color: this.ghost ? 'rgba(255,255,255,0.16)' : 'rgba(255,255,255,0.09)' })
+      .backgroundColor(this.ghost ? MeowColors.glassBgSoft : MeowColors.solidSurfaceSoft)
+      .border({ width: 1, color: this.ghost ? MeowColors.borderGhost : MeowColors.borderSoft })
       .shadow({
         radius: this.ghost ? 0 : 10,
-        color: this.ghost ? 'rgba(0,0,0,0)' : 'rgba(4,5,20,0.22)',
+        color: this.ghost ? MeowColors.transparent : MeowColors.shadowControl,
         offsetX: 0,
         offsetY: this.ghost ? 0 : 4
       })

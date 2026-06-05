@@ -3,22 +3,23 @@ import { BottomNavBar } from '../../components/BottomNavBar'
 import { MiniPlayer } from '../../components/MiniPlayer'
 import { SecondaryButton } from '../../components/SecondaryButton'
 import { PlayerManager } from '../../model/PlayerManager'
-import { MeowColors, MeowEffects, MeowRadius, MeowSpacing, MeowTypography } from '../../theme/theme'
+import { MeowColors, MeowRadius, MeowSpacing, MeowTypography } from '../../theme/theme'
 
 interface ProfileMenuItem {
   id: number
-  icon: string
+  iconType: string
   title: string
   hint: string
   badge: string
+  accent: string
 }
 
 const PROFILE_MENU: ProfileMenuItem[] = [
-  { id: 1, icon: '+', title: 'Add Account', hint: 'Switch or add another listener', badge: '' },
-  { id: 2, icon: '▥', title: 'Listening Stats', hint: 'Weekly taste and listening time', badge: 'New' },
-  { id: 3, icon: '↺', title: 'Recently Played', hint: 'Return to your latest queue', badge: '' },
-  { id: 4, icon: '•', title: 'Updates', hint: 'Release notes and product news', badge: 'New' },
-  { id: 5, icon: '⚙', title: 'Settings and Privacy', hint: 'Account, playback, and Privacy', badge: '' }
+  { id: 1, iconType: 'account', title: 'Add Account', hint: 'Switch or add another listener', badge: '', accent: '#2FA7D6' },
+  { id: 2, iconType: 'stats', title: 'Listening Stats', hint: 'Weekly taste and listening time', badge: 'New', accent: '#F5D84A' },
+  { id: 3, iconType: 'history', title: 'Recently Played', hint: 'Return to your latest queue', badge: '', accent: '#2AB7A9' },
+  { id: 4, iconType: 'updates', title: 'Updates', hint: 'Release notes and product news', badge: 'New', accent: '#D65ACF' },
+  { id: 5, iconType: 'privacy', title: 'Settings and Privacy', hint: 'Account, playback, and privacy', badge: '', accent: '#A3ADB8' }
 ]
 
 @Entry
@@ -30,10 +31,31 @@ struct Profile {
     console.log(`[ProfilePage] menu ${item.title}`)
   }
 
+  private menuSymbol(iconType: string): string {
+    if (iconType === 'account') {
+      return '+'
+    }
+    if (iconType === 'stats') {
+      return '⌁'
+    }
+    if (iconType === 'history') {
+      return '↺'
+    }
+    if (iconType === 'updates') {
+      return '↗'
+    }
+    return '⚙'
+  }
+
+  private menuSymbolSize(iconType: string): number {
+    return iconType === 'account' ? 24 : 19
+  }
+
   private async logout(): Promise<void> {
     console.log('[ProfilePage] logout')
     AppStorage.SetOrCreate<boolean>('isLoggedIn', false)
     AppStorage.SetOrCreate<string>('mockUsername', 'Phu')
+    AppStorage.SetOrCreate<string>('likedTrackIds', '')
     PlayerManager.reset()
     await router.replaceUrl({ url: 'pages/auth/Login' })
   }
@@ -44,7 +66,7 @@ struct Profile {
       Row()
         .width(sizeValue)
         .height(sizeValue)
-        .borderRadius(sizeValue * 0.28)
+        .borderRadius(sizeValue / 2)
         .linearGradient({
           angle: 135,
           colors: [
@@ -55,8 +77,8 @@ struct Profile {
           ]
         })
         .shadow({
-          radius: MeowEffects.glowBlur,
-          color: MeowColors.glowGold,
+          radius: 14,
+          color: 'rgba(212,175,55,0.26)',
           offsetX: 0,
           offsetY: 0
         })
@@ -64,14 +86,14 @@ struct Profile {
       Row()
         .width(sizeValue - 8)
         .height(sizeValue - 8)
-        .borderRadius((sizeValue - 8) * 0.26)
+        .borderRadius((sizeValue - 8) / 2)
         .backgroundColor(MeowColors.solidSurface)
 
       Image($r('app.media.meowsic_app_icon'))
         .width(sizeValue - 8)
         .height(sizeValue - 8)
         .objectFit(ImageFit.Contain)
-        .borderRadius((sizeValue - 8) * 0.26)
+        .borderRadius((sizeValue - 8) / 2)
         .clip(true)
     }
     .width(sizeValue)
@@ -94,22 +116,44 @@ struct Profile {
   }
 
   @Builder
+  private StatusPill(label: string, tone: string) {
+    Text(label)
+      .fontSize(11)
+      .fontWeight(FontWeight.Bold)
+      .fontColor(tone)
+      .padding({ left: 10, right: 10, top: 5, bottom: 5 })
+      .borderRadius(12)
+      .backgroundColor('rgba(255,255,255,0.055)')
+      .border({ width: 1, color: 'rgba(255,255,255,0.08)' })
+  }
+
+  @Builder
+  private MenuIcon(item: ProfileMenuItem) {
+    Stack({ alignContent: Alignment.Center }) {
+      Row()
+        .width(44)
+        .height(44)
+        .borderRadius(22)
+        .backgroundColor('rgba(255,255,255,0.055)')
+        .border({ width: 1, color: 'rgba(255,255,255,0.10)' })
+      Circle()
+        .width(24)
+        .height(24)
+        .fill(item.accent)
+        .opacity(0.18)
+      Text(this.menuSymbol(item.iconType))
+        .fontSize(this.menuSymbolSize(item.iconType))
+        .fontWeight(FontWeight.Bold)
+        .fontColor(item.accent)
+    }
+    .width(44)
+    .height(44)
+  }
+
+  @Builder
   private MenuRow(item: ProfileMenuItem) {
     Row({ space: 14 }) {
-      Stack({ alignContent: Alignment.Center }) {
-        Row()
-          .width(44)
-          .height(44)
-          .borderRadius(22)
-          .backgroundColor('rgba(255,255,255,0.08)')
-          .border({ width: 1, color: 'rgba(255,255,255,0.10)' })
-        Text(item.icon)
-          .fontSize(item.icon === '+' ? 24 : 20)
-          .fontWeight(FontWeight.Bold)
-          .fontColor(MeowColors.textPrimary)
-      }
-      .width(44)
-      .height(44)
+      this.MenuIcon(item)
 
       Column({ space: 4 }) {
         Row({ space: 8 }) {
@@ -120,10 +164,7 @@ struct Profile {
             .maxLines(1)
             .textOverflow({ overflow: TextOverflow.Ellipsis })
           if (item.badge.length > 0) {
-            Text(item.badge)
-              .fontSize(11)
-              .fontWeight(FontWeight.Bold)
-              .fontColor(MeowColors.goldBright)
+            this.StatusPill(item.badge, MeowColors.goldBright)
           }
         }
         .width('100%')
@@ -137,7 +178,7 @@ struct Profile {
       .layoutWeight(1)
       .alignItems(HorizontalAlign.Start)
 
-      Text('>')
+      Text('›')
         .fontSize(18)
         .fontColor(MeowColors.textTertiary)
     }
@@ -152,9 +193,15 @@ struct Profile {
   private ProfileHeader() {
     Column({ space: 18 }) {
       Row({ space: 16 }) {
-        this.Avatar(78)
+        this.Avatar(82)
 
-        Column({ space: 6 }) {
+        Column({ space: 8 }) {
+          Row({ space: 8 }) {
+            this.StatusPill('Gold', MeowColors.goldBright)
+            this.StatusPill('Private', MeowColors.textSecondary)
+          }
+          .width('100%')
+
           Text(this.mockUsername.length > 0 ? this.mockUsername : 'Phu')
             .fontSize(30)
             .fontWeight(FontWeight.Bold)
@@ -164,10 +211,6 @@ struct Profile {
           Text('PhuiSic Gold Listener')
             .fontSize(MeowTypography.bodySize)
             .fontColor(MeowColors.textSecondary)
-          Text('View profile')
-            .fontSize(MeowTypography.captionSize)
-            .fontWeight(FontWeight.Bold)
-            .fontColor(MeowColors.goldBright)
         }
         .layoutWeight(1)
         .alignItems(HorizontalAlign.Start)
@@ -189,6 +232,65 @@ struct Profile {
     .borderRadius(MeowRadius.large)
     .backgroundColor(MeowColors.solidSurface)
     .border({ width: 1, color: 'rgba(255,255,255,0.08)' })
+    .shadow({
+      radius: 16,
+      color: MeowColors.shadowNavy,
+      offsetX: 0,
+      offsetY: 6
+    })
+  }
+
+  @Builder
+  private MenuPanel() {
+    Column({ space: 0 }) {
+      ForEach(PROFILE_MENU, (item: ProfileMenuItem) => {
+        this.MenuRow(item)
+      }, (item: ProfileMenuItem) => `${item.id}`)
+    }
+    .width('100%')
+    .padding({ left: 18, right: 18, top: 6, bottom: 6 })
+    .borderRadius(MeowRadius.large)
+    .backgroundColor(MeowColors.solidSurface)
+    .border({ width: 1, color: 'rgba(255,255,255,0.08)' })
+  }
+
+  @Builder
+  private LogoutPanel() {
+    Column({ space: 12 }) {
+      Text('Session')
+        .fontSize(MeowTypography.subheadingSize)
+        .fontWeight(FontWeight.Bold)
+        .fontColor(MeowColors.textPrimary)
+        .width('100%')
+      Text('Logging out returns to the sign-in screen and resets the demo session.')
+        .fontSize(MeowTypography.bodySize)
+        .fontColor(MeowColors.textSecondary)
+        .lineHeight(20)
+        .width('100%')
+      SecondaryButton({
+        label: 'Log Out',
+        ghost: true,
+        action: () => {
+          this.logout()
+        }
+      })
+    }
+    .width('100%')
+    .padding(22)
+    .borderRadius(MeowRadius.large)
+    .backgroundColor(MeowColors.solidSurface)
+    .border({ width: 1, color: 'rgba(255,255,255,0.08)' })
+  }
+
+  @Builder
+  private BottomChrome() {
+    Column() {
+      MiniPlayer()
+        .margin({ left: 14, right: 14, bottom: MeowSpacing.miniPlayerBottomMargin })
+      BottomNavBar({ activeTab: 'Profile' })
+    }
+    .width('100%')
+    .zIndex(10)
   }
 
   build() {
@@ -205,13 +307,6 @@ struct Profile {
           ]
         })
 
-      Circle()
-        .width(320)
-        .height(320)
-        .fill('rgba(212,175,55,0.055)')
-        .blur(78)
-        .translate({ x: 128, y: -250 })
-
       Scroll() {
         Column({ space: MeowSpacing.sectionGap }) {
           Text('Profile')
@@ -221,45 +316,11 @@ struct Profile {
             .width('100%')
 
           this.ProfileHeader()
-
-          Column({ space: 0 }) {
-            ForEach(PROFILE_MENU, (item: ProfileMenuItem) => {
-              this.MenuRow(item)
-            }, (item: ProfileMenuItem) => `${item.id}`)
-          }
-          .width('100%')
-          .padding({ left: 18, right: 18, top: 6, bottom: 6 })
-          .borderRadius(MeowRadius.large)
-          .backgroundColor(MeowColors.solidSurface)
-          .border({ width: 1, color: 'rgba(255,255,255,0.08)' })
-
-          Column({ space: 12 }) {
-            Text('Session')
-              .fontSize(MeowTypography.subheadingSize)
-              .fontWeight(FontWeight.Bold)
-              .fontColor(MeowColors.textPrimary)
-              .width('100%')
-            Text('Take a quiet pause from this listening space.')
-              .fontSize(MeowTypography.bodySize)
-              .fontColor(MeowColors.textSecondary)
-              .lineHeight(20)
-              .width('100%')
-            SecondaryButton({
-              label: 'Log Out',
-              ghost: true,
-              action: () => {
-                this.logout()
-              }
-            })
-          }
-          .width('100%')
-          .padding(22)
-          .borderRadius(MeowRadius.large)
-          .backgroundColor(MeowColors.solidSurface)
-          .border({ width: 1, color: 'rgba(255,255,255,0.08)' })
+          this.MenuPanel()
+          this.LogoutPanel()
         }
         .width('100%')
-        .padding({ left: MeowSpacing.pagePadding, right: MeowSpacing.pagePadding, top: 64, bottom: MeowSpacing.mainContentBottomPadding })
+        .padding({ left: MeowSpacing.pagePadding, right: MeowSpacing.pagePadding, top: 64, bottom: MeowSpacing.mainContentBottomPadding + 24 })
       }
       .width('100%')
       .height('100%')
@@ -267,17 +328,11 @@ struct Profile {
       .scrollBar(BarState.Off)
       .zIndex(1)
 
-      Column() {
-        MiniPlayer()
-          .margin({ left: 14, right: 14, bottom: MeowSpacing.miniPlayerBottomMargin })
-        BottomNavBar({ activeTab: 'Profile' })
-      }
-      .width('100%')
-      .zIndex(10)
+      this.BottomChrome()
     }
     .width('100%')
     .height('100%')
     .backgroundColor(MeowColors.navyDeep)
-    .expandSafeArea([SafeAreaType.SYSTEM], [SafeAreaEdge.TOP, SafeAreaEdge.BOTTOM])
+    .expandSafeArea([SafeAreaType.SYSTEM])
   }
 }

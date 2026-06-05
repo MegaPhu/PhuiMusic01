@@ -18,14 +18,11 @@ export struct AlbumCard {
     Image(this.track.artwork)
       .width(152)
       .height(152)
-      .borderRadius(14)
+      .borderRadius(MeowRadius.card)
       .objectFit(ImageFit.Cover)
       .clip(true)
       .backgroundColor(MeowColors.solidSurface)
-      .border({ width: 1, color: 'rgba(255,255,255,0.07)' })
-      .shadow({ radius: 18, color: 'rgba(4,5,20,0.34)', offsetX: 0, offsetY: 10 })
-    .width(152)
-    .height(152)
+      .border({ width: 1, color: MeowColors.borderSubtle })
   }
 
   build() {
@@ -41,7 +38,7 @@ export struct AlbumCard {
           .fontSize(15)
           .fontWeight(FontWeight.Bold)
           .fontColor(MeowColors.textPrimary)
-          .maxLines(2)
+          .maxLines(1)
           .textOverflow({ overflow: TextOverflow.Ellipsis })
         Text(this.track.artist)
           .fontSize(MeowTypography.captionSize)

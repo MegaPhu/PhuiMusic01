@@ -1,4 +1,4 @@
-import { MeowColors, MeowEffects, MeowRadius, MeowSpacing } from '../theme/theme'
+import { MeowColors, MeowRadius, MeowSpacing } from '../theme/theme'
 
 @Component
 export struct SolidCard {
@@ -14,13 +14,13 @@ export struct SolidCard {
     .width('100%')
     .padding(this.paddingValue)
     .borderRadius(this.radiusValue)
-    .backgroundColor(this.elevated ? MeowColors.solidSurfaceRaised : 'rgba(28,28,58,0.88)')
-    .border({ width: 1, color: this.elevated ? 'rgba(255,255,255,0.10)' : 'rgba(255,255,255,0.075)' })
+    .backgroundColor(this.elevated ? MeowColors.solidSurfaceRaised : MeowColors.solidSurface)
+    .border({ width: 1, color: this.elevated ? MeowColors.borderStrong : MeowColors.borderSubtle })
     .shadow({
-      radius: this.elevated ? 24 : 10,
-      color: this.elevated ? MeowColors.shadowNavy : 'rgba(4,5,20,0.18)',
+      radius: this.elevated ? 22 : 8,
+      color: this.elevated ? MeowColors.shadowNavy : MeowColors.shadowSubtle,
       offsetX: 0,
-      offsetY: this.elevated ? 10 : 4
+      offsetY: this.elevated ? 8 : 3
     })
   }
 }

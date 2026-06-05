@@ -15,12 +15,12 @@ struct Player {
   @StorageLink('currentTrack') currentTrack: Track = DEFAULT_TRACK
   @StorageLink('isPlaying') isPlaying: boolean = false
   @StorageLink('likedTrackIds') likedTrackIds: string = ''
-  @State private elapsedSeconds: number = 0
+  @StorageLink('currentTimeSeconds') elapsedSeconds: number = 0
   @State private lyricsExpanded: boolean = false
   private playTimer: number = -1
 
   aboutToAppear(): void {
-    this.elapsedSeconds = Math.min(76, Math.floor(this.currentTrack.duration * 0.44))
+    this.elapsedSeconds = Math.max(0, Math.min(this.elapsedSeconds, this.currentTrack.duration))
     this.startTimer()
   }
 
@@ -48,6 +48,9 @@ struct Player {
   }
 
   private activeLyricIndexFor(seconds: number): number {
+    if (this.currentTrack.lyrics.length === 0 || this.currentTrack.timestamps.length === 0) {
+      return -1
+    }
     let activeIndex = 0
     const elapsedMs = seconds * 1000
     for (let i = 0; i < this.currentTrack.timestamps.length; i++) {
@@ -56,6 +59,10 @@ struct Player {
       }
     }
     return Math.min(activeIndex, this.currentTrack.lyrics.length - 1)
+  }
+
+  private resetPlaybackPosition(): void {
+    this.elapsedSeconds = 0
   }
 
   private activeLyricIndex(): number {
@@ -109,7 +116,10 @@ struct Player {
   }
 
   private progressPercent(): string {
-    const percent = Math.min(100, Math.max(4, Math.floor((this.elapsedSeconds / this.currentTrack.duration) * 100)))
+    if (this.currentTrack.duration <= 0) {
+      return '0%'
+    }
+    const percent = Math.min(100, Math.max(0, Math.floor((this.elapsedSeconds / this.currentTrack.duration) * 100)))
     return `${percent}%`
   }
 
@@ -126,14 +136,14 @@ struct Player {
 
   private previousTrack(): void {
     PlayerManager.playPrevious(this.currentTrack, this.isPlaying)
-    this.elapsedSeconds = 0
+    this.resetPlaybackPosition()
     this.lyricsExpanded = false
     console.log('[PlayerPage] previous track')
   }
 
   private nextTrack(): void {
     PlayerManager.playNext(this.currentTrack, this.isPlaying)
-    this.elapsedSeconds = 0
+    this.resetPlaybackPosition()
     this.lyricsExpanded = false
     console.log('[PlayerPage] next track')
   }
@@ -212,15 +222,17 @@ struct Player {
         .width('100%')
         .aspectRatio(1)
         .objectFit(ImageFit.Contain)
+        .borderRadius(MeowRadius.large)
+        .clip(true)
     }
     .width('100%')
     .aspectRatio(1)
     .borderRadius(MeowRadius.large)
     .shadow({
-      radius: 34,
+      radius: 28,
       color: this.currentTrack.accentSoft,
       offsetX: 0,
-      offsetY: 14
+      offsetY: 10
     })
     .scale({
       x: this.isPlaying ? 1 : 0.94,
@@ -400,18 +412,76 @@ struct Player {
   }
 
   @Builder
+  private ShareActionIcon() {
+    Stack({ alignContent: Alignment.Center }) {
+      Row()
+        .width(18)
+        .height(2)
+        .borderRadius(1)
+        .backgroundColor(MeowColors.textSecondary)
+        .rotate({ angle: -32 })
+        .translate({ x: 0, y: -2 })
+      Row()
+        .width(18)
+        .height(2)
+        .borderRadius(1)
+        .backgroundColor(MeowColors.textSecondary)
+        .rotate({ angle: 28 })
+        .translate({ x: 0, y: 5 })
+      Circle()
+        .width(6)
+        .height(6)
+        .fill(MeowColors.textSecondary)
+        .translate({ x: -9, y: 7 })
+      Circle()
+        .width(6)
+        .height(6)
+        .fill(MeowColors.textSecondary)
+        .translate({ x: 8, y: -8 })
+      Circle()
+        .width(6)
+        .height(6)
+        .fill(MeowColors.textSecondary)
+        .translate({ x: 10, y: 9 })
+    }
+    .width(28)
+    .height(28)
+  }
+
+  @Builder
+  private QueueActionIcon() {
+    Stack({ alignContent: Alignment.Center }) {
+      Row()
+        .width(22)
+        .height(2.4)
+        .borderRadius(1.2)
+        .backgroundColor(MeowColors.textSecondary)
+        .translate({ x: 0, y: -7 })
+      Row()
+        .width(22)
+        .height(2.4)
+        .borderRadius(1.2)
+        .backgroundColor(MeowColors.textSecondary)
+      Row()
+        .width(22)
+        .height(2.4)
+        .borderRadius(1.2)
+        .backgroundColor(MeowColors.textSecondary)
+        .translate({ x: 0, y: 7 })
+    }
+    .width(28)
+    .height(28)
+  }
+
+  @Builder
   private BottomAction(label: string, action: () => void) {
     Column({ space: 3 }) {
       if (label === 'Connect') {
         this.DeviceActionIcon()
       } else if (label === 'Share') {
-        Text('↗')
-          .fontSize(23)
-          .fontColor(MeowColors.textSecondary)
+        this.ShareActionIcon()
       } else {
-        Text('☰')
-          .fontSize(23)
-          .fontColor(MeowColors.textSecondary)
+        this.QueueActionIcon()
       }
 
       Text(label)
@@ -494,8 +564,9 @@ struct Player {
           Text(line.text.length > 0 ? line.text : ' ')
             .fontSize(line.index === this.activeLyricIndex() ? 20 : 16)
             .fontWeight(line.index === this.activeLyricIndex() ? FontWeight.Bold : FontWeight.Medium)
-            .fontColor(line.index === this.activeLyricIndex() ? this.currentTrack.accent : MeowColors.textTertiary)
+            .fontColor(line.index === this.activeLyricIndex() ? MeowColors.textPrimary : MeowColors.textTertiary)
             .width('100%')
+            .opacity(line.index === this.activeLyricIndex() ? 1 : 0.56)
             .animation({ duration: 500, curve: Curve.EaseInOut })
       }, (line: LyricLine) => `${line.index}`)
       }
@@ -505,7 +576,7 @@ struct Player {
     .width('100%')
     .padding(18)
     .borderRadius(MeowRadius.large)
-    .backgroundColor('rgba(12,13,31,0.66)')
+    .backgroundColor('rgba(28,28,58,0.90)')
     .border({ width: 1, color: 'rgba(255,255,255,0.08)' })
   }
 
@@ -661,6 +732,6 @@ struct Player {
     .width('100%')
     .height('100%')
     .backgroundColor(MeowColors.navyDeep)
-    .expandSafeArea([SafeAreaType.SYSTEM], [SafeAreaEdge.TOP, SafeAreaEdge.BOTTOM])
+    .expandSafeArea([SafeAreaType.SYSTEM])
   }
 }

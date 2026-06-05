@@ -47,7 +47,7 @@ export struct AuthMascot {
       Circle()
         .width(this.imageSize() * 0.72)
         .height(this.imageSize() * 0.72)
-        .fill('rgba(212,175,55,0.13)')
+        .fill(MeowColors.glowGoldHalo)
         .blur(this.compact ? 16 : 28)
 
       this.MascotImage(this.imageSize())
@@ -56,8 +56,8 @@ export struct AuthMascot {
         Circle()
           .width(this.imageSize() * 0.72)
           .height(this.imageSize() * 0.72)
-          .fill('rgba(0,0,0,0)')
-          .border({ width: 2, color: 'rgba(255,215,0,0.22)' })
+          .fill(MeowColors.transparent)
+          .border({ width: 2, color: MeowColors.goldRingSoft })
           .opacity(0.36)
       }
     }
@@ -66,7 +66,7 @@ export struct AuthMascot {
     .scale({ x: this.breathe, y: this.breathe })
     .shadow({
       radius: this.dj ? 22 : MeowEffects.glowBlur,
-      color: this.dj ? MeowColors.glowGold : 'rgba(212,175,55,0.22)',
+      color: this.dj ? MeowColors.glowGold : MeowColors.glowGoldFaint,
       offsetX: 0,
       offsetY: 0
     })

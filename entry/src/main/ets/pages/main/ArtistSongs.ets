@@ -316,6 +316,6 @@ struct ArtistSongs {
     .width('100%')
     .height('100%')
     .backgroundColor(MeowColors.navyDeep)
-    .expandSafeArea([SafeAreaType.SYSTEM], [SafeAreaEdge.TOP, SafeAreaEdge.BOTTOM])
+    .expandSafeArea([SafeAreaType.SYSTEM])
   }
 }

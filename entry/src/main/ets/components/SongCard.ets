@@ -1,7 +1,7 @@
 import router from '@ohos.router'
 import { DEFAULT_TRACK, Track } from '../model/MusicData'
 import { PlayerManager } from '../model/PlayerManager'
-import { MeowColors, MeowRadius, MeowSpacing, MeowTypography } from '../theme/theme'
+import { MeowColors, MeowRadius, MeowTypography } from '../theme/theme'
 
 @Component
 export struct SongCard {
@@ -24,9 +24,7 @@ export struct SongCard {
       .objectFit(ImageFit.Cover)
       .clip(true)
       .backgroundColor(MeowColors.solidSurface)
-      .border({ width: 1, color: 'rgba(255,255,255,0.07)' })
-    .width(sizeValue)
-    .height(sizeValue)
+      .border({ width: 1, color: MeowColors.borderSubtle })
   }
 
   @Builder
@@ -35,12 +33,12 @@ export struct SongCard {
       Text(PlayerManager.isLiked(this.track, this.likedTrackIds) ? '♥' : '♡')
         .fontSize(this.compact ? 20 : 22)
         .fontWeight(FontWeight.Bold)
-        .fontColor(PlayerManager.isLiked(this.track, this.likedTrackIds) ? this.track.accent : 'rgba(255,255,255,0.68)')
+        .fontColor(PlayerManager.isLiked(this.track, this.likedTrackIds) ? this.track.accent : MeowColors.textSecondary)
     }
       .width(this.compact ? 32 : 36)
       .height(this.compact ? 34 : 38)
       .borderRadius(this.compact ? 16 : 18)
-      .backgroundColor(PlayerManager.isLiked(this.track, this.likedTrackIds) ? this.track.accentSoft : 'rgba(255,255,255,0.035)')
+      .backgroundColor(PlayerManager.isLiked(this.track, this.likedTrackIds) ? this.track.accentSoft : MeowColors.glassBgSoft)
       .onClick(() => {
         console.log(`[SongCard] toggle like ${this.track.title}`)
         PlayerManager.toggleLikedInStorage(this.track, this.likedTrackIds)
@@ -60,7 +58,7 @@ export struct SongCard {
           .textOverflow({ overflow: TextOverflow.Ellipsis })
         Text(`${this.track.kind} · ${this.track.artist}`)
           .fontSize(MeowTypography.captionSize)
-          .fontColor('rgba(255,255,255,0.58)')
+          .fontColor(MeowColors.textQuaternary)
           .maxLines(1)
           .textOverflow({ overflow: TextOverflow.Ellipsis })
       }
@@ -81,8 +79,8 @@ export struct SongCard {
     .height(this.compact ? 78 : 88)
     .padding({ left: 12, right: 14, top: 12, bottom: 12 })
     .borderRadius(this.compact ? 14 : MeowRadius.card)
-    .backgroundColor('rgba(28,28,58,0.78)')
-    .border({ width: 1, color: 'rgba(255,255,255,0.07)' })
+    .backgroundColor(MeowColors.solidSurface)
+    .border({ width: 1, color: MeowColors.borderSubtle })
     .onClick(() => {
       this.openPlayer()
     })

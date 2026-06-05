@@ -75,8 +75,6 @@ struct Login {
           ]
         })
 
-      Circle().width(300).height(300).fill('rgba(212,175,55,0.12)').blur(80).translate({ x: -118, y: -248 })
-      Circle().width(260).height(260).fill('rgba(74,70,156,0.26)').blur(72).translate({ x: 130, y: 252 })
       FloatingNotes({ compact: true })
 
       Scroll() {
@@ -185,6 +183,6 @@ struct Login {
     .width('100%')
     .height('100%')
     .backgroundColor(MeowColors.navyDeep)
-    .expandSafeArea([SafeAreaType.SYSTEM], [SafeAreaEdge.TOP, SafeAreaEdge.BOTTOM])
+    .expandSafeArea([SafeAreaType.SYSTEM])
   }
 }

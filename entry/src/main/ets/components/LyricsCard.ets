@@ -1,5 +1,5 @@
 import { DEFAULT_TRACK, Track } from '../model/MusicData'
-import { MeowColors, MeowEffects } from '../theme/theme'
+import { MeowColors, MeowRadius } from '../theme/theme'
 
 interface VisibleLyric {
   index: number
@@ -46,10 +46,10 @@ export struct LyricsCard {
   }
 
   build() {
-    Column({ space: 12 }) {
+    Column({ space: 14 }) {
       Row() {
         Text('Lyrics Preview')
-          .fontSize(15)
+          .fontSize(16)
           .fontWeight(FontWeight.Bold)
           .fontColor(MeowColors.textPrimary)
         Blank()
@@ -63,9 +63,9 @@ export struct LyricsCard {
       Column({ space: 9 }) {
         ForEach(this.visibleLyrics(), (line: VisibleLyric) => {
           Text(line.text.length > 0 ? line.text : ' ')
-            .fontSize(line.index === this.activeLyricIndex() ? 18 : 14)
+            .fontSize(line.index === this.activeLyricIndex() ? 19 : 14)
             .fontWeight(line.index === this.activeLyricIndex() ? FontWeight.Bold : FontWeight.Regular)
-            .fontColor(line.index === this.activeLyricIndex() ? this.track.accent : MeowColors.textSecondary)
+            .fontColor(line.index === this.activeLyricIndex() ? MeowColors.textPrimary : MeowColors.textSecondary)
             .opacity(this.lineOpacity(line.index))
             .maxLines(line.index === this.activeLyricIndex() ? 2 : 1)
             .textOverflow({ overflow: TextOverflow.Ellipsis })
@@ -78,16 +78,15 @@ export struct LyricsCard {
       .alignItems(HorizontalAlign.Start)
     }
     .width('100%')
-    .padding(18)
-    .borderRadius(18)
-    .backgroundColor('rgba(12,13,31,0.62)')
-    .border({ width: 1, color: 'rgba(255,255,255,0.10)' })
-    .backdropBlur(MeowEffects.backdropBlur)
+    .padding(20)
+    .borderRadius(MeowRadius.large)
+    .backgroundColor(MeowColors.surfaceOverlay)
+    .border({ width: 1, color: MeowColors.borderSoft })
     .shadow({
-      radius: 18,
-      color: this.track.accentSoft,
+      radius: 20,
+      color: MeowColors.shadowNavy,
       offsetX: 0,
-      offsetY: 8
+      offsetY: 10
     })
     .animation({ duration: 500, curve: Curve.EaseInOut })
     .onClick(() => {

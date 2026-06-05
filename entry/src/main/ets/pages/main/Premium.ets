@@ -59,13 +59,6 @@ struct Premium {
           ]
         })
 
-      Circle()
-        .width(320)
-        .height(320)
-        .fill('rgba(212,175,55,0.09)')
-        .blur(84)
-        .translate({ x: 124, y: -252 })
-
       Scroll() {
         Column({ space: MeowSpacing.sectionGap }) {
           Text('Premium')
@@ -124,9 +117,9 @@ struct Premium {
 
           Column({ space: 2 }) {
             this.BenefitRow('↓', 'Offline listening', 'Keep albums ready for flights and late-night commutes.')
-            this.BenefitRow('HQ', 'Higher quality', 'A cleaner stream for headphones and quiet rooms.')
+            this.BenefitRow('◇', 'Higher quality', 'A cleaner stream for headphones and quiet rooms.')
             this.BenefitRow('✓', 'No interruptions', 'Stay inside the mix with fewer breaks.')
-            this.BenefitRow('Q', 'Gold queue tools', 'Save handpicked sessions for repeat listening.')
+            this.BenefitRow('☰', 'Gold queue tools', 'Save handpicked sessions for repeat listening.')
           }
           .width('100%')
           .padding(18)
@@ -154,6 +147,6 @@ struct Premium {
     .width('100%')
     .height('100%')
     .backgroundColor(MeowColors.navyDeep)
-    .expandSafeArea([SafeAreaType.SYSTEM], [SafeAreaEdge.TOP, SafeAreaEdge.BOTTOM])
+    .expandSafeArea([SafeAreaType.SYSTEM])
   }
 }

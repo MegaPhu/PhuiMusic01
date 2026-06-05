@@ -84,7 +84,7 @@ export struct MiniPlayer {
       Circle()
         .width(30)
         .height(30)
-        .fill(PlayerManager.isLiked(this.currentTrack, this.likedTrackIds) ? this.currentTrack.accentSoft : 'rgba(0,0,0,0)')
+        .fill(PlayerManager.isLiked(this.currentTrack, this.likedTrackIds) ? this.currentTrack.accentSoft : MeowColors.transparent)
         .stroke(PlayerManager.isLiked(this.currentTrack, this.likedTrackIds) ? this.currentTrack.accent : MeowColors.textPrimary)
         .strokeWidth(2)
 
@@ -130,12 +130,12 @@ export struct MiniPlayer {
         Text(this.currentTrack.title)
           .fontSize(15)
           .fontWeight(FontWeight.Bold)
-          .fontColor('#FFFFFF')
+          .fontColor(MeowColors.textPrimary)
           .maxLines(1)
           .textOverflow({ overflow: TextOverflow.Ellipsis })
         Text(this.currentTrack.artist)
           .fontSize(13)
-          .fontColor('rgba(255,255,255,0.75)')
+          .fontColor(MeowColors.textSecondaryStrong)
           .maxLines(1)
           .textOverflow({ overflow: TextOverflow.Ellipsis })
       }
@@ -157,14 +157,14 @@ export struct MiniPlayer {
     .width('100%')
     .height(72)
     .padding({ left: 0, right: 0, top: 0, bottom: 0 })
-    .backgroundColor('rgba(12,13,31,0.92)')
-    .border({ width: 1, color: 'rgba(255,255,255,0.09)' })
+    .backgroundColor(MeowColors.miniPlayerOverlay)
+    .border({ width: 1, color: MeowColors.borderSoft })
     .borderRadius(16)
     .clip(true)
     .backdropBlur(MeowEffects.backdropBlur)
     .shadow({
       radius: 22,
-      color: 'rgba(0,0,0,0.38)',
+      color: MeowColors.shadowMiniPlayer,
       offsetX: 0,
       offsetY: 8
     })

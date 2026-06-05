@@ -42,7 +42,7 @@ export struct GlassInput {
         .fontColor(MeowColors.textPrimary)
         .placeholderColor(MeowColors.textTertiary)
         .caretColor(MeowColors.goldBright)
-        .backgroundColor('rgba(0,0,0,0)')
+        .backgroundColor(MeowColors.transparent)
         .layoutWeight(1)
         .onFocus(() => {
           this.focused = true
@@ -69,7 +69,7 @@ export struct GlassInput {
     .width('100%')
     .padding({ left: 18, right: 16 })
     .borderRadius(28)
-    .backgroundColor('rgba(255,255,255,0.065)')
+    .backgroundColor(MeowColors.glassInputBg)
     .border({
       width: this.focused ? 1.8 : 1.5,
       color: this.focused ? MeowColors.goldBright : MeowColors.glassStroke
@@ -77,7 +77,7 @@ export struct GlassInput {
     .backdropBlur(MeowEffects.backdropBlur)
     .shadow({
       radius: this.focused ? 18 : 0,
-      color: this.focused ? MeowColors.glowGold : 'rgba(0,0,0,0)',
+      color: this.focused ? MeowColors.glowGold : MeowColors.transparent,
       offsetX: 0,
       offsetY: 0
     })

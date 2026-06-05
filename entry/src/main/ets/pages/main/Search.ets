@@ -15,10 +15,10 @@ interface BrowseCategory {
 }
 
 const BROWSE_CATEGORIES: BrowseCategory[] = [
-  { id: 1, title: 'Music', subtitle: 'Songs and albums', start: '#2B4D88', end: '#6C8BD8' },
-  { id: 2, title: 'Podcast', subtitle: 'Stories and talk', start: '#176F5C', end: '#4FB091' },
-  { id: 3, title: 'Audiobooks', subtitle: 'Long listening', start: '#5E3D8E', end: '#A983D8' },
-  { id: 4, title: 'Live Events', subtitle: 'Sessions nearby', start: '#843F52', end: '#D27D8F' }
+  { id: 1, title: 'Music', subtitle: 'Songs and albums', start: '#253E73', end: '#5E7FD0' },
+  { id: 2, title: 'Podcast', subtitle: 'Stories and talk', start: '#12614F', end: '#43A184' },
+  { id: 3, title: 'Audiobooks', subtitle: 'Long listening', start: '#56357F', end: '#9370C8' },
+  { id: 4, title: 'Live Events', subtitle: 'Sessions nearby', start: '#773649', end: '#BE6D82' }
 ]
 
 @Entry
@@ -35,13 +35,45 @@ struct SearchPage {
   }
 
   private resultCount(): number {
-    let count = 0
+    return this.filteredTracks().length
+  }
+
+  private filteredTracks(): Track[] {
+    const results: Track[] = []
     for (let i = 0; i < MUSIC_TRACKS.length; i++) {
       if (this.matches(MUSIC_TRACKS[i])) {
-        count++
+        results.push(MUSIC_TRACKS[i])
       }
     }
-    return count
+    return results
+  }
+
+  private visibleResults(): Track[] {
+    const results = this.filteredTracks()
+    if (this.query.length > 0) {
+      return results
+    }
+    return results.slice(0, 4)
+  }
+
+  private resultSummary(): string {
+    if (this.query.length === 0) {
+      return 'Songs you may want next'
+    }
+    const count = this.resultCount()
+    if (count === 1) {
+      return '1 match'
+    }
+    return `${count} matches`
+  }
+
+  private contentBottomPadding(): number {
+    return MeowSpacing.mainContentBottomPadding + 24
+  }
+
+  private clearQuery(): void {
+    console.log('[SearchPage] clear query')
+    this.query = ''
   }
 
   @Builder
@@ -82,13 +114,35 @@ struct SearchPage {
           console.log('[SearchPage] query changed')
           this.query = value
         })
+
+      if (this.query.length > 0) {
+        Text('×')
+          .fontSize(24)
+          .fontWeight(FontWeight.Bold)
+          .fontColor(MeowColors.textSecondary)
+          .width(34)
+          .height(34)
+          .textAlign(TextAlign.Center)
+          .borderRadius(17)
+          .backgroundColor('rgba(255,255,255,0.06)')
+          .onClick(() => {
+            this.clearQuery()
+          })
+      }
     }
     .height(56)
     .width('100%')
     .padding({ left: 16, right: 16 })
     .borderRadius(MeowRadius.control)
-    .backgroundColor(MeowColors.solidSurface)
-    .border({ width: 1, color: 'rgba(255,255,255,0.10)' })
+    .backgroundColor('rgba(28,28,58,0.88)')
+    .border({ width: 1, color: this.query.length > 0 ? 'rgba(212,175,55,0.42)' : 'rgba(255,255,255,0.10)' })
+    .shadow({
+      radius: this.query.length > 0 ? 16 : 0,
+      color: this.query.length > 0 ? 'rgba(212,175,55,0.14)' : 'rgba(0,0,0,0)',
+      offsetX: 0,
+      offsetY: 6
+    })
+    .animation({ duration: 180, curve: Curve.EaseOut })
   }
 
   @Builder
@@ -96,14 +150,14 @@ struct SearchPage {
     Stack({ alignContent: Alignment.BottomStart }) {
       Row()
         .width('100%')
-        .height(116)
+        .height(124)
         .borderRadius(MeowRadius.card)
         .linearGradient({
           angle: 135,
           colors: [
             [category.start, 0.0],
-            [category.end, 0.58],
-            [MeowColors.solidSurface, 1.0]
+            [category.end, 0.66],
+            ['rgba(28,28,58,0.92)', 1.0]
           ]
         })
 
@@ -112,18 +166,30 @@ struct SearchPage {
           .fontSize(MeowTypography.subheadingSize)
           .fontWeight(FontWeight.Bold)
           .fontColor(MeowColors.textPrimary)
+          .maxLines(1)
+          .textOverflow({ overflow: TextOverflow.Ellipsis })
         Text(category.subtitle)
           .fontSize(MeowTypography.captionSize)
           .fontColor('rgba(255,255,255,0.70)')
+          .maxLines(2)
+          .textOverflow({ overflow: TextOverflow.Ellipsis })
       }
+      .width('100%')
       .alignItems(HorizontalAlign.Start)
-      .padding({ left: 16, right: 16, bottom: 16 })
+      .padding({ left: 16, right: 16, bottom: 18 })
 
     }
     .layoutWeight(1)
-    .height(116)
+    .height(124)
     .borderRadius(MeowRadius.card)
+    .border({ width: 1, color: 'rgba(255,255,255,0.10)' })
     .clip(true)
+    .shadow({
+      radius: 10,
+      color: 'rgba(4,5,20,0.32)',
+      offsetX: 0,
+      offsetY: 5
+    })
     .onClick(() => {
       console.log(`[SearchPage] category ${category.title}`)
     })
@@ -131,12 +197,13 @@ struct SearchPage {
 
   @Builder
   private EmptyResults() {
-    Column({ space: 8 }) {
+    Column({ space: 10 }) {
+      this.SearchGlyph()
       Text('No results found')
         .fontSize(MeowTypography.subheadingSize)
         .fontWeight(FontWeight.Bold)
         .fontColor(MeowColors.textPrimary)
-      Text('Try a song, artist, or album name.')
+      Text(this.query.length > 0 ? `No matches for "${this.query}"` : 'Try a song, artist, or album name.')
         .fontSize(MeowTypography.bodySize)
         .fontColor(MeowColors.textSecondary)
         .textAlign(TextAlign.Center)
@@ -144,7 +211,7 @@ struct SearchPage {
     .width('100%')
     .padding({ left: 18, right: 18, top: 28, bottom: 28 })
     .borderRadius(MeowRadius.card)
-    .backgroundColor(MeowColors.solidSurface)
+    .backgroundColor('rgba(28,28,58,0.72)')
     .border({ width: 1, color: 'rgba(255,255,255,0.08)' })
     .alignItems(HorizontalAlign.Center)
   }
@@ -153,17 +220,18 @@ struct SearchPage {
   private DiscoverCard(track: Track) {
     Stack({ alignContent: Alignment.BottomStart }) {
       Image(track.artwork)
-        .width(156)
-        .height(192)
-        .borderRadius(MeowRadius.large)
+        .width(160)
+        .height(196)
+        .borderRadius(18)
         .objectFit(ImageFit.Cover)
         .clip(true)
         .backgroundColor(MeowColors.solidSurface)
+        .border({ width: 1, color: 'rgba(255,255,255,0.08)' })
 
       Row()
-        .width(156)
+        .width(160)
         .height(104)
-        .borderRadius(MeowRadius.large)
+        .borderRadius(18)
         .linearGradient({
           angle: 180,
           colors: [
@@ -184,17 +252,118 @@ struct SearchPage {
           .fontColor(MeowColors.textPrimary)
           .maxLines(2)
           .textOverflow({ overflow: TextOverflow.Ellipsis })
+        Text(track.artist)
+          .fontSize(12)
+          .fontColor(MeowColors.textSecondary)
+          .maxLines(1)
+          .textOverflow({ overflow: TextOverflow.Ellipsis })
       }
-      .width(156)
+      .width(160)
       .padding({ left: 14, right: 14, bottom: 14 })
       .alignItems(HorizontalAlign.Start)
     }
-    .width(156)
-    .height(192)
+    .width(160)
+    .height(196)
+    .shadow({
+      radius: 16,
+      color: MeowColors.shadowNavy,
+      offsetX: 0,
+      offsetY: 7
+    })
     .onClick(async () => {
       PlayerManager.playTrack(track)
       await router.pushUrl({ url: 'pages/main/Player' })
     })
+  }
+
+  @Builder
+  private ResultsHeader() {
+    Row() {
+      Column({ space: 3 }) {
+        Text(this.query.length > 0 ? 'Results' : 'Recommended Searches')
+          .fontSize(MeowTypography.subheadingSize)
+          .fontWeight(FontWeight.Bold)
+          .fontColor(MeowColors.textPrimary)
+        Text(this.resultSummary())
+          .fontSize(MeowTypography.captionSize)
+          .fontColor(MeowColors.textTertiary)
+      }
+      .layoutWeight(1)
+      .alignItems(HorizontalAlign.Start)
+    }
+    .width('100%')
+    .alignItems(VerticalAlign.Center)
+  }
+
+  @Builder
+  private BrowseContent() {
+    Column({ space: MeowSpacing.sectionGap }) {
+      Column({ space: 16 }) {
+        Text('Browse All')
+          .fontSize(22)
+          .fontWeight(FontWeight.Bold)
+          .fontColor(MeowColors.textPrimary)
+          .width('100%')
+        Row({ space: 14 }) {
+          this.CategoryCard(BROWSE_CATEGORIES[0])
+          this.CategoryCard(BROWSE_CATEGORIES[1])
+        }
+        .width('100%')
+        Row({ space: 14 }) {
+          this.CategoryCard(BROWSE_CATEGORIES[2])
+          this.CategoryCard(BROWSE_CATEGORIES[3])
+        }
+        .width('100%')
+      }
+      .width('100%')
+
+      Column({ space: 14 }) {
+        Text('Discover')
+          .fontSize(22)
+          .fontWeight(FontWeight.Bold)
+          .fontColor(MeowColors.textPrimary)
+          .width('100%')
+        Scroll() {
+          Row({ space: 16 }) {
+            ForEach(MUSIC_TRACKS, (track: Track) => {
+              this.DiscoverCard(track)
+            }, (track: Track) => `${track.id}`)
+          }
+          .padding({ right: 40 })
+        }
+        .scrollable(ScrollDirection.Horizontal)
+        .scrollBar(BarState.Off)
+        .width('100%')
+      }
+      .width('100%')
+    }
+    .width('100%')
+  }
+
+  @Builder
+  private ResultsContent() {
+    Column({ space: 12 }) {
+      this.ResultsHeader()
+      if (this.resultCount() === 0) {
+        this.EmptyResults()
+      } else {
+        ForEach(this.visibleResults(), (track: Track) => {
+          SongCard({ track: track })
+        }, (track: Track) => `${track.id}`)
+      }
+    }
+    .width('100%')
+  }
+
+  @Builder
+  private BottomChrome() {
+    Column() {
+      MiniPlayer()
+        .margin({ left: 14, right: 14, bottom: MeowSpacing.miniPlayerBottomMargin })
+      BottomNavBar({ activeTab: 'Search' })
+    }
+    .width('100%')
+    .zIndex(10)
   }
 
   build() {
@@ -225,62 +394,14 @@ struct SearchPage {
 
           this.SearchBar()
 
-          Column({ space: 14 }) {
-            Text('Browse')
-              .fontSize(MeowTypography.headingSize)
-              .fontWeight(FontWeight.Bold)
-              .fontColor(MeowColors.textPrimary)
-              .width('100%')
-            Row({ space: 14 }) {
-              this.CategoryCard(BROWSE_CATEGORIES[0])
-              this.CategoryCard(BROWSE_CATEGORIES[1])
-            }
-            .width('100%')
-            Row({ space: 14 }) {
-              this.CategoryCard(BROWSE_CATEGORIES[2])
-              this.CategoryCard(BROWSE_CATEGORIES[3])
-            }
-            .width('100%')
+          if (this.query.length === 0) {
+            this.BrowseContent()
           }
-          .width('100%')
 
-          Column({ space: 14 }) {
-            Text('Discover')
-              .fontSize(MeowTypography.headingSize)
-              .fontWeight(FontWeight.Bold)
-              .fontColor(MeowColors.textPrimary)
-              .width('100%')
-            Scroll() {
-              Row({ space: 16 }) {
-                ForEach(MUSIC_TRACKS, (track: Track) => {
-                  this.DiscoverCard(track)
-                }, (track: Track) => `${track.id}`)
-              }
-              .padding({ right: 24 })
-            }
-            .scrollable(ScrollDirection.Horizontal)
-            .scrollBar(BarState.Off)
-          }
-          .width('100%')
-
-          Column({ space: 12 }) {
-            Text(this.query.length > 0 ? 'Results' : 'Recommended Searches')
-              .fontSize(MeowTypography.subheadingSize)
-              .fontWeight(FontWeight.Bold)
-              .fontColor(MeowColors.textPrimary)
-              .width('100%')
-            if (this.resultCount() === 0) {
-              this.EmptyResults()
-            } else {
-              ForEach(MUSIC_TRACKS.filter((track: Track) => this.matches(track)).slice(0, 4), (track: Track) => {
-                SongCard({ track: track })
-              }, (track: Track) => `${track.id}`)
-            }
-          }
-          .width('100%')
+          this.ResultsContent()
         }
         .width('100%')
-        .padding({ left: MeowSpacing.pagePadding, right: MeowSpacing.pagePadding, top: 64, bottom: MeowSpacing.mainContentBottomPadding })
+        .padding({ left: MeowSpacing.pagePadding, right: MeowSpacing.pagePadding, top: 64, bottom: MeowSpacing.mainContentBottomPadding + 24 })
       }
       .width('100%')
       .height('100%')
@@ -288,17 +409,11 @@ struct SearchPage {
       .scrollBar(BarState.Off)
       .zIndex(1)
 
-      Column() {
-        MiniPlayer()
-          .margin({ left: 14, right: 14, bottom: MeowSpacing.miniPlayerBottomMargin })
-        BottomNavBar({ activeTab: 'Search' })
-      }
-      .width('100%')
-      .zIndex(10)
+      this.BottomChrome()
     }
     .width('100%')
     .height('100%')
     .backgroundColor(MeowColors.navyDeep)
-    .expandSafeArea([SafeAreaType.SYSTEM], [SafeAreaEdge.TOP, SafeAreaEdge.BOTTOM])
+    .expandSafeArea([SafeAreaType.SYSTEM])
   }
 }

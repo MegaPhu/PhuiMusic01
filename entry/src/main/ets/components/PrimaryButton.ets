@@ -13,20 +13,20 @@ export struct PrimaryButton {
       .width('100%')
       .fontSize(16)
       .fontWeight(FontWeight.Bold)
-      .fontColor(this.isEnabled ? '#F4D77A' : MeowColors.textTertiary)
+      .fontColor(this.isEnabled ? MeowColors.textGold : MeowColors.textTertiary)
       .borderRadius(MeowRadius.pill)
       .linearGradient({
         angle: 135,
         colors: [
           [MeowColors.navyDeep, 0.0],
-          ['#17172F', 0.48],
-          ['#252545', 1.0]
+          [MeowColors.navyButtonMid, 0.48],
+          [MeowColors.navyButtonEnd, 1.0]
         ]
       })
-      .border({ width: 1.2, color: this.isEnabled ? 'rgba(255,215,0,0.42)' : 'rgba(255,255,255,0.14)' })
+      .border({ width: 1.2, color: this.isEnabled ? MeowColors.glassStroke : MeowColors.borderDisabled })
       .shadow({
         radius: this.isEnabled ? (this.pressed ? 10 : 14) : 0,
-        color: this.isEnabled ? 'rgba(212,175,55,0.24)' : 'rgba(0,0,0,0)',
+        color: this.isEnabled ? MeowColors.glowGoldSoft : MeowColors.transparent,
         offsetX: 0,
         offsetY: this.pressed ? 4 : 7
       })

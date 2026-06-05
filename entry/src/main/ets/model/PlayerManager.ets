@@ -2,6 +2,10 @@ import { DEFAULT_TRACK, MUSIC_TRACKS, Track } from './MusicData'
 
 export class PlayerManager {
   private static setCurrentTrack(track: Track, isPlaying: boolean): void {
+    const currentTrackId = AppStorage.Get<string>('currentTrackId')
+    if (currentTrackId !== track.id) {
+      AppStorage.SetOrCreate<number>('currentTimeSeconds', 0)
+    }
     AppStorage.SetOrCreate<Track>('currentTrack', track)
     AppStorage.SetOrCreate<string>('currentTrackId', track.id)
     AppStorage.SetOrCreate<boolean>('isPlaying', isPlaying)
@@ -20,7 +24,9 @@ export class PlayerManager {
   }
 
   static reset(): void {
+    AppStorage.SetOrCreate<number>('currentTimeSeconds', 0)
     AppStorage.SetOrCreate<Track>('currentTrack', DEFAULT_TRACK)
+    AppStorage.SetOrCreate<string>('currentTrackId', DEFAULT_TRACK.id)
     AppStorage.SetOrCreate<boolean>('isPlaying', false)
   }
 

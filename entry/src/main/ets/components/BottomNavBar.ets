@@ -43,7 +43,7 @@ export struct BottomNavBar {
     Text(this.iconFor(label))
       .fontSize(label === 'Create' ? 30 : 24)
       .fontWeight(FontWeight.Bold)
-      .fontColor(this.activeTab === label ? '#FFFFFF' : '#888888')
+      .fontColor(this.activeTab === label ? MeowColors.textPrimary : MeowColors.textDisabled)
   }
 
   @Builder
@@ -58,7 +58,7 @@ export struct BottomNavBar {
       Text(label)
         .fontSize(11)
         .fontWeight(this.activeTab === label ? FontWeight.Bold : FontWeight.Regular)
-        .fontColor(this.activeTab === label ? '#FFFFFF' : '#888888')
+        .fontColor(this.activeTab === label ? MeowColors.textPrimary : MeowColors.textDisabled)
         .maxLines(1)
         .textOverflow({ overflow: TextOverflow.Ellipsis })
     }
@@ -94,8 +94,8 @@ export struct BottomNavBar {
     .width('100%')
     .height(MeowSpacing.bottomNavHeight)
     .padding({ left: 10, right: 10, top: 6, bottom: 6 })
-    .backgroundColor('rgba(9,10,18,0.92)')
-    .border({ width: { top: 1 }, color: 'rgba(255,255,255,0.10)' })
+    .backgroundColor(MeowColors.navOverlay)
+    .border({ width: { top: 1 }, color: MeowColors.borderStrong })
     .backdropBlur(MeowEffects.backdropBlur)
   }
 }

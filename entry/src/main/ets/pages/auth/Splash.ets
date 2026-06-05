@@ -35,20 +35,6 @@ struct Splash {
           ]
         })
 
-      Circle()
-        .width(320)
-        .height(320)
-        .fill('rgba(212,175,55,0.13)')
-        .blur(84)
-        .translate({ x: -124, y: -236 })
-
-      Circle()
-        .width(300)
-        .height(300)
-        .fill('rgba(74,70,156,0.26)')
-        .blur(86)
-        .translate({ x: 138, y: 258 })
-
       Scroll() {
         Column({ space: 24 }) {
         Image($r('app.media.meowsic_app_icon'))
@@ -93,6 +79,6 @@ struct Splash {
     .width('100%')
     .height('100%')
     .backgroundColor(MeowColors.navyDeep)
-    .expandSafeArea([SafeAreaType.SYSTEM], [SafeAreaEdge.TOP, SafeAreaEdge.BOTTOM])
+    .expandSafeArea([SafeAreaType.SYSTEM])
   }
 }
